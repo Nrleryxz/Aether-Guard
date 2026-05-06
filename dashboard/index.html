@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nrleryx Guard Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        .card { background: #1e293b; border-radius: 8px; padding: 20px; margin-top: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .status-up { color: #4ade80; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #334155; }
+        .btn { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        .btn:hover { background: #2563eb; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Nrleryx Guard <small style="font-size: 0.5em; color: #94a3b8;">v1.0.4</small></h1>
+        <div>System Status: <span class="status-up">ONLINE</span></div>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h3>Live Traffic</h3>
+            <table id="metricsTable">
+                <thead>
+                    <tr>
+                        <th>Source</th>
+                        <th>Message</th>
+                        <th>Level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="3">No data available yet...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>AI Threat Analysis</h3>
+            <div id="aiAnalysis">
+                <p>Waiting for incoming data to analyze...</p>
+            </div>
+            <button class="btn" onclick="fetchAnalysis()">Refresh Analysis</button>
+        </div>
+    </div>
+
+    <script>
+        async function fetchAnalysis() {
+            // Simulated fetch for the demo
+            document.getElementById('aiAnalysis').innerHTML = `
+                <div style="padding:10px; background:#334155; border-radius:5px;">
+                    <p><strong>Threat Score:</strong> 0.2 (Low)</p>
+                    <p><strong>Recommendation:</strong> Systems clear.</p>
+                    <p><small>Last updated: ${new手Time().toLocaleTimeString()}</small></p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
