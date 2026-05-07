@@ -3,23 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nrleryx Guard Dashboard</title>
+    <title>Aether Guard Dashboard</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px; }
-        .card { background: #1e293b; border-radius: 8px; padding: 20px; margin-top: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .status-up { color: #4ade80; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #334155; }
-        .btn { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-        .btn:hover { background: #2563eb; }
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
+        .header h1 { font-size: 2rem; font-weight: 700; margin: 0; }
+        .header .version { font-size: 0.8rem; color: #64748b; margin-left: 10px; font-weight: normal; }
+        .status { font-size: 0.9rem; }
+        .status-up { color: #4ade80; font-weight: 600; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 20px; }
+        .card { background: #1e293b; border-radius: 12px; padding: 24px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border: 1px solid #334155; }
+        .card h3 { margin-top: 0; margin-bottom: 20px; font-size: 1.1rem; color: #f1f5f9; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px; color: #94a3b8; font-size: 0.85rem; text-transform: uppercase; border-bottom: 1px solid #334155; }
+        td { padding: 12px; border-bottom: 1px solid #334155; font-size: 0.95rem; }
+        .empty-state { color: #64748b; padding: 20px; text-align: center; }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Nrleryx Guard <small style="font-size: 0.5em; color: #94a3b8;">v1.0.4</small></h1>
-        <div>System Status: <span class="status-up">ONLINE</span></div>
+        <h1>Aether Guard <span class="version">v1.0.0</span></h1>
+        <div class="status">System Status: <span class="status-up">ONLINE</span></div>
     </div>
 
     <div class="grid">
@@ -28,13 +32,13 @@
             <table id="metricsTable">
                 <thead>
                     <tr>
-                        <th>Source</th>
-                        <th>Message</th>
-                        <th>Level</th>
+                        <th style="width: 25%;">Source</th>
+                        <th style="width: 50%;">Message</th>
+                        <th style="width: 25%;">Level</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td colspan="3">No data available yet...</td></tr>
+                    <tr><td colspan="3" class="empty-state">Waiting for data...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -42,23 +46,45 @@
         <div class="card">
             <h3>AI Threat Analysis</h3>
             <div id="aiAnalysis">
-                <p>Waiting for incoming data to analyze...</p>
+                <p class="empty-state">Waiting for data...</p>
             </div>
-            <button class="btn" onclick="fetchAnalysis()">Refresh Analysis</button>
         </div>
     </div>
 
     <script>
-        async function fetchAnalysis() {
-            // Simulated fetch for the demo
-            document.getElementById('aiAnalysis').innerHTML = `
-                <div style="padding:10px; background:#334155; border-radius:5px;">
-                    <p><strong>Threat Score:</strong> 0.2 (Low)</p>
-                    <p><strong>Recommendation:</strong> Systems clear.</p>
-                    <p><small>Last updated: ${new手Time().toLocaleTimeString()}</small></p>
-                </div>
-            `;
+        async function updateDashboard() {
+            try {
+                const response = await fetch('http://localhost:8080/api/v1/metrics');
+                const data = await response.json();
+                const tbody = document.querySelector('#metricsTable tbody');
+                
+                if (data && data.length > 0) {
+                    tbody.innerHTML = '';
+                    const lastData = data.slice(-10).reverse();
+                    lastData.forEach(m => {
+                        const row = `<tr>
+                            <td>${m.source}</td>
+                            <td>${m.message}</td>
+                            <td style="color: ${m.ai_score > 4 ? '#f87171' : '#4ade80'}">${m.level} (AI: ${m.ai_score})</td>
+                        </tr>`;
+                        tbody.innerHTML += row;
+                    });
+
+                    const last = lastData[0];
+                    document.getElementById('aiAnalysis').innerHTML = `
+                        <div style="padding:15px; background:#0f172a; border-radius:8px; border: 1px solid #334155;">
+                            <p style="margin: 0 0 10px 0;"><strong>Latest Source:</strong> ${last.source}</p>
+                            <p style="margin: 0 0 10px 0;"><strong>Threat Score:</strong> <span style="color: ${last.ai_score > 4 ? '#f87171' : '#4ade80'}">${last.ai_score}</span></p>
+                            <p style="margin: 0 0 10px 0;"><strong>AI Note:</strong> ${last.ai_note}</p>
+                            <p style="margin: 0; font-size: 0.8rem; color: #64748b;">Last update: ${new Date(last.timestamp).toLocaleTimeString()}</p>
+                        </div>
+                    `;
+                }
+            } catch (e) {}
         }
+
+        setInterval(updateDashboard, 2000);
+        updateDashboard();
     </script>
 </body>
 </html>

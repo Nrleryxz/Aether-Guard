@@ -1,0 +1,12 @@
+{
+  "system": {
+    "name": "Aether Guard",
+    "version": "1.0.0",
+    "port": 8080
+  },
+  "ai_settings": {
+    "url": "http://localhost:5000/analyze",
+    "sensitivity": 0.8,
+    "log_history": true
+  }
+}

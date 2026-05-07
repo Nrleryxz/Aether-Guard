@@ -26,7 +26,7 @@ AetherGuard is a lightweight, high-performance multi-language security monitorin
 {
   "system": {
     "name": "AetherGuard Core",
-    "version": "1.0.4",
+    "version": "1.0.0",
     "port": 8080
   },
   "ai_settings": {
@@ -62,3 +62,9 @@ Simply open `dashboard/index.html` in any modern web browser.
 ## Author
 
 *   Nrleryx
+
+## Update
+*   Improved AI analysis logic
+*   Enhanced Dashboard UI
+*   Optimized Go core performance
+*   Added config.json support

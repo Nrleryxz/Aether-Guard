@@ -16,8 +16,10 @@ def analyze_threats():
     threat_level = 0
     raw_message = data.get('message', '').lower()
     
-    if any(word in raw_message for word in ['attack', 'exploit', 'sql', 'bypass']):
+    if any(word in raw_message for word in ['attack', 'exploit', 'sql', 'bypass', 'admin', 'root', 'login', 'password']):
         threat_level += 5
+    if any(word in raw_message for word in ['curl', 'wget', 'chmod', 'rm -rf']):
+        threat_level += 3
     if data.get('level', 0) > 3:
         threat_level += 2
         
@@ -25,7 +27,7 @@ def analyze_threats():
         "time": datetime.datetime.now().isoformat(),
         "score": threat_level,
         "note": "Critical" if threat_level > 4 else "Safe",
-        "by": "Nrleryx Guard"
+        "by": "Aether Guard"
     }
     
     guard_analysis_history.append(result)
@@ -36,5 +38,4 @@ def get_history():
     return jsonify(guard_analysis_history)
 
 if __name__ == '__main__':
-    print("AI module ready on 5000")
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, threaded=True)
